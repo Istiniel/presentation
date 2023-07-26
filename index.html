@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h2>JSON web tockens (JWT)</h2>
+				<p>The concept of JSON Web Tokens and how to impement it</p>
+			</section>
+			<section id="fragments">
+				<h2>JWT structure</h2>
+				<p class="fragment">JWT consists of three parts</p>
+				<p class="fragment">Header</p>
+				<p class="fragment">Payload</p>
+				<p class="fragment">Signature</p>
+			</section>
+			<section id="fragments">
+				<h2>Header</h2>
+				<p class="fragment">Service part, JWT "settings" (algorithm, token type)</p>
+				<pre class="fragment" data-id="code-animation"><code class="hljs JSON" data-trim data-line-numbers>
+					{
+						"alg": "HS256",
+						"typ": "JWT"
+					}
+				</code></pre>
+			</section>
+			<section id="fragments">
+				<h2>Payload</h2>
+				<div class="fragment">
+					<p>Identifying information (user id, name etc)</p>
+					<p style="font-size: 2rem;">here can be stored any useful data</p>
+				</div>
+				<pre class="fragment" data-id="code-animation">
+					<code class="hljs JSON" data-trim data-line-numbers>
+					{
+						"sub": "1234567890",
+						"name": "Quincy Larson",
+						"iat": 1516239022
+					}
+					</code>
+				</pre>
+				<p style="font-size: 2rem;" class="fragment">"iat" is the "issued at" date for the token, and is a registered
+					claim</p>
+			</section>
+			<section id="fragments">
+				<h2>Signature</h2>
+				<div class="fragment">
+					<p>Cryptographic signature of the token</p>
+				</div>
+				<p style="font-size: 2rem;" class="fragment">
+					The header and payload parts are encrypted by base64url algorithm and afterwards united in a single box using
+					a dot (“.”) as a divider
+				</p>
+				<pre class="fragment" data-id="code-animation">
+					<code class="hljs JSON" data-trim data-line-numbers>
+						HMACSHA256(
+							base64UrlEncode(header) + "." +
+							base64UrlEncode(payload),
+							secret-key
+						)
+					</code>
+				</pre>
+				<p style="font-size: 2rem;" class="fragment">Secret key is used to generate JWT signature. It has to be stored
+					serverside and shared beetwen backend services</p>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
+</body>
+
+</html>
