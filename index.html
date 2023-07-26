@@ -19,12 +19,11 @@
 	<div class="reveal">
 		<div class="slides">
 			<section>
-				<h2>JSON web tockens (JWT)</h2>
+				<h2>JSON web tokens (JWT)</h2>
 				<p>The concept of JSON Web Tokens and how to impement it</p>
 			</section>
 			<section id="fragments">
 				<h2>JWT structure</h2>
-				<p class="fragment">JWT consists of three parts</p>
 				<p class="fragment">Header</p>
 				<p class="fragment">Payload</p>
 				<p class="fragment">Signature</p>
@@ -67,7 +66,7 @@
 					a dot (“.”) as a divider
 				</p>
 				<pre class="fragment" data-id="code-animation">
-					<code class="hljs JSON" data-trim data-line-numbers>
+					<code class="hljs js" data-trim data-line-numbers>
 						HMACSHA256(
 							base64UrlEncode(header) + "." +
 							base64UrlEncode(payload),
@@ -77,6 +76,123 @@
 				</pre>
 				<p style="font-size: 2rem;" class="fragment">Secret key is used to generate JWT signature. It has to be stored
 					serverside and shared beetwen backend services</p>
+			</section>
+			<section>
+				<section>
+					<h2>JWT advantages</h2>
+				</section>
+				<section id="fragments">
+					<p>JWT tokens are not stored on the server (optionally)</p>
+					<p style="font-size: 2rem;" class="fragment">
+						The backend verifies the signature and extracts necessary fields out of the payload, there is no reason to
+						store tokens manually
+					</p>
+					<pre class="fragment" data-id="code-animation">
+					<code class="hljs js" data-trim data-line-numbers>
+						const jwt = required('jsonwebtoken')
+
+						jwt.verify(token, secretOrPublicKey, [options, callback])
+					</code>
+					</pre>
+					<p style="font-size: 2rem;" class="fragment">
+						With this approach, each service gets necessary user data directly from the token and does not waste time on
+						acquiring this information from the database
+					</p>
+				</section>
+				<section id="fragments">
+					<p>Separated authentication server</p>
+					<p style="font-size: 2rem;" class="fragment">
+						JWT provides ability to use auth service separated from main server
+					</p>
+				</section>
+				<section id="fragments">
+					<p>Payload information is encoded</p>
+					<p style="font-size: 2rem;" class="fragment">
+						JWT is a string in the nutshell, divided by dots
+					</p>
+					<pre class="fragment" data-id="code-animation">
+					<code class="hljs JSON" data-trim data-line-numbers>
+						header.payload.signature
+					</code>
+				</pre>
+					<p style="font-size: 2rem;" class="fragment">
+						Encoded payload provides ability to use cookie for data transfering
+					</p>
+				</section>
+				<section id="fragments">
+					<h3>Encoding !== Encryption</h3>
+					<p style="font-size: 2rem;" class="fragment">
+						JWT does not guaranty secure for sensitive information!
+					</p>
+					<p style="font-size: 2rem;" class="fragment">
+						It's mainly the way sustain stateless approach for authorizaion process
+					</p>
+					<h3 class="fragment">Do not place passwords inside JWT payload!</h3>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Access and refresh tokens</h3>
+				</section>
+				<section>
+					<h3>Access token</h3>
+					<p style="font-size: 2rem;" class="fragment">
+						Authorization server issues an access token, which is an artifact that client applications can use to make
+						secure calls to an API server
+					</p>
+					<br>
+					<div class="fragment">
+						<p style="font-size: 2rem;">
+							Access tokens may be valid for a short amount of time
+						</p>
+						<p style="font-size: 2rem;">
+							(75 minutes on average)
+						</p>
+					</div>
+				</section>
+				<section>
+					<h3>Refresh token</h3>
+					<p style="font-size: 2rem;" class="fragment">
+						Lets a client application get new access tokens without having
+						to ask the user to log in again
+					</p>
+					<p style="font-size: 2rem;" class="fragment">
+						The client application can get a new access token as long as the refresh token is valid and unexpired
+					</p>
+					<p style="font-size: 2rem;" class="fragment">
+						Refresh token that has a very long lifespan
+					</p>
+				</section>
+			</section>
+			<section>
+				<h3>Automatic reuse detection</h3>
+				<p style="font-size: 2rem;" class="fragment">
+					Every time your application exchanges a refresh token to get a new access token, the authorization server also
+					returns a new refresh-access token pair
+				</p>
+				<p>🔑 Access Token + 🔑 Refresh Token</p>
+				<p style="font-size: 2rem;" class="fragment">
+					This safeguard helps your app mitigate replay attacks resulting from compromised tokens
+				</p>
+			</section>
+			<section>
+				<h3>🔑How tokens are reached to client? </h3>
+				<p style="font-size: 2rem;" class="fragment">
+					Access tocken is included in response body when created.
+				</p>
+				<div class="fragment">
+					<p style="font-size: 2rem;">
+						Client should use request header to pass token to server
+					</p>
+					<pre data-id="code-animation">
+					<code class="hljs js" data-trim data-line-numbers>
+						Authorization: Bearer JWTtoken
+					</code>
+					</pre>
+				</div>
+				<p style="font-size: 2rem;" class="fragment">
+					Refresh tocken is sent using httpOnly cockie with secure property in order to protect client from XSS attacks
+				</p>
 			</section>
 		</div>
 	</div>
